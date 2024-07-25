@@ -1,20 +1,41 @@
 import React, { useState } from 'react';
-import { format } from 'date-fns';
+import { format, isBefore, parseISO } from 'date-fns';
 
 function App() {
   const [todos, setTodos] = useState([]);
   const [editIndex, setEditIndex] = useState(null);
   const [editText, setEditText] = useState('');
   const [editDueDate, setEditDueDate] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const validateTodo = (todo, dueDate) => {
+    if (!todo || !todo.trim()) {
+      return 'Task cannot be empty';
+    }
+    if (!dueDate) {
+      return 'Due date cannot be empty';
+    }
+    if (isBefore(parseISO(dueDate), new Date())) {
+      return 'Due date cannot be in the past';
+    }
+    return '';
+  };
 
   const addTodo = (todo, dueDate) => {
+    const error = validateTodo(todo, dueDate);
+    if (error) {
+      setErrorMessage(error);
+      return;
+    }
+
     const newTodo = {
       text: todo,
       completed: false,
       createdAt: new Date(),
-      dueDate: dueDate ? new Date(dueDate) : null,
+      dueDate: new Date(dueDate),
     };
     setTodos([...todos, newTodo]);
+    setErrorMessage('');
   };
 
   const deleteTodo = (index) => {
@@ -39,19 +60,27 @@ function App() {
     setEditIndex(null);
     setEditText('');
     setEditDueDate('');
+    setErrorMessage('');
   };
 
   const submitEditTodo = () => {
+    const error = validateTodo(editText, editDueDate);
+    if (error) {
+      setErrorMessage(error);
+      return;
+    }
+
     const newTodos = [...todos];
     newTodos[editIndex].text = editText;
-    newTodos[editIndex].dueDate = editDueDate ? new Date(editDueDate) : null;
+    newTodos[editIndex].dueDate = new Date(editDueDate);
     setTodos(newTodos);
     cancelEdit();
   };
 
   return (
-    <div className="max-w-lg mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
-      <h1 className="text-2xl font-bold text-center mb-4">To-Do List</h1>
+    <div className="font-roboto max-w-lg mx-auto mt-10 p-6 bg-gray-100 shadow-lg rounded-lg">
+      <h1 className="text-3xl font-bold text-center mb-4 text-blue-600">To-Do List</h1>
+      {errorMessage && <div className="text-red-500 mb-4">{errorMessage}</div>}
       <AddToDo addTodo={addTodo} />
       <ToDoList
         todos={todos}
@@ -119,30 +148,30 @@ function ToDoItem({
   cancelEdit,
 }) {
   return (
-    <li className="flex items-center justify-between p-2 border-b">
+    <li className="flex items-center justify-between p-2 border-b bg-white mb-2 shadow-sm rounded-lg">
       {isEditing ? (
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 w-full">
           <input
             type="text"
             value={editText}
             onChange={(e) => setEditText(e.target.value)}
-            className="border p-2 flex-grow"
+            className="border p-2 flex-grow rounded"
           />
           <input
             type="date"
             value={editDueDate}
             onChange={(e) => setEditDueDate(e.target.value)}
-            className="border p-2"
+            className="border p-2 rounded"
           />
-          <button onClick={submitEditTodo} className="bg-green-500 text-white p-2">Save</button>
-          <button onClick={cancelEdit} className="bg-gray-500 text-white p-2">Cancel</button>
+          <button onClick={submitEditTodo} className="bg-green-500 text-white p-2 rounded">Save</button>
+          <button onClick={cancelEdit} className="bg-gray-500 text-white p-2 rounded">Cancel</button>
         </div>
       ) : (
         <>
           <div className="flex-grow">
             <span
               onClick={toggleComplete}
-              className={`cursor-pointer ${todo.completed ? 'line-through' : ''}`}
+              className={`cursor-pointer ${todo.completed ? 'line-through' : ''} text-lg`}
             >
               {todo.text}
             </span>
@@ -155,21 +184,20 @@ function ToDoItem({
               </div>
             )}
           </div>
-          <button onClick={startEditTodo} className="bg-yellow-500 text-white p-2 mx-2">Edit</button>
-          <button onClick={deleteTodo} className="bg-red-500 text-white p-2">Delete</button>
+          <button onClick={startEditTodo} className="bg-yellow-500 text-white p-2 mx-2 rounded">Edit</button>
+          <button onClick={deleteTodo} className="bg-red-500 text-white p-2 rounded">Delete</button>
         </>
       )}
     </li>
   );
 }
 
-function AddToDo ({ addTodo }) {
+function AddToDo({ addTodo }) {
   const [input, setInput] = useState('');
   const [dueDate, setDueDate] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!input.trim()) return;
     addTodo(input, dueDate);
     setInput('');
     setDueDate('');
@@ -181,16 +209,16 @@ function AddToDo ({ addTodo }) {
         type="text"
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        className="border p-2 flex-grow"
+        className="border p-2 flex-grow rounded"
         placeholder="Add a new task..."
       />
       <input
         type="date"
         value={dueDate}
         onChange={(e) => setDueDate(e.target.value)}
-        className="border p-2"
+        className="border p-2 rounded"
       />
-      <button type="submit" className="bg-blue-500 text-white p-2">Add</button>
+      <button type="submit" className="bg-blue-500 text-white p-2 rounded">Add</button>
     </form>
   );
 }
