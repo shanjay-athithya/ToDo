@@ -15,7 +15,7 @@ function TodoItem({
   cancelEdit,
 }) {
   return (
-    <li className="flex items-center justify-between p-2 border-b bg-white mb-2 shadow-sm rounded-lg">
+    <li className="flex items-center justify-between p-2 border-2 border-black bg-white mb-2 shadow-sm rounded-lg bg-green-100">
       {isEditing ? (
         <div className="flex items-center space-x-2 w-full">
           <input
@@ -35,7 +35,7 @@ function TodoItem({
         </div>
       ) : (
         <>
-          <div className="flex-grow">
+          <div className="flex-grow bg-green-100">
             <span
               onClick={toggleComplete}
               className={`cursor-pointer ${todo.completed ? 'line-through' : ''} text-lg`}
@@ -51,8 +51,8 @@ function TodoItem({
               </div>
             )}
           </div>
-          <button onClick={startEditTodo} className="bg-yellow-500 text-white p-2 mx-2 rounded">Edit</button>
-          <button onClick={deleteTodo} className="bg-red-500 text-white p-2 rounded">Delete</button>
+          <button onClick={startEditTodo} className="bg-yellow-500 text-white p-2 px-6 mx-2 rounded">Edit</button>
+          <button onClick={deleteTodo} className="bg-red-500 text-white p-2 px-4 rounded">Delete</button>
         </>
       )}
     </li>

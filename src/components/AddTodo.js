@@ -26,7 +26,7 @@ function AddTodo({ addTodo }) {
         onChange={(e) => setDueDate(e.target.value)}
         className="border p-2 rounded"
       />
-      <button type="submit" className="bg-blue-500 text-white p-2 rounded">Add</button>
+      <button type="submit" className="bg-green-600 text-white px-6 rounded">Add</button>
     </form>
   );
 }

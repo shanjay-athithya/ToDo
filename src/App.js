@@ -80,8 +80,8 @@ function App() {
   };
 
   return (
-    <div className="font-roboto max-w-lg mx-auto mt-10 p-6 bg-gray-100 shadow-lg rounded-lg">
-      <h1 className="text-3xl font-bold text-center mb-4 text-blue-600">To-Do List</h1>
+    <div className="font-roboto max-w-xl mx-auto mt-10 p-6 bg-gray-100 shadow-lg rounded-lg">
+      <h1 className="text-3xl font-bold text-center mb-4 text-green-600">To-Do List</h1>
       {errorMessage && <div className="text-red-500 mb-4">{errorMessage}</div>}
       <AddTodo addTodo={addTodo} />
       <TodoList
